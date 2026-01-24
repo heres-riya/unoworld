@@ -61,6 +61,24 @@ def create_player():
     
     return render_template('create.html')
 
+@app.route('/dummy')
+def add_dummy():
+    """Add a dummy player record"""
+    try:
+        dummy_player = Player(
+            name='Dummy Player',
+            position='Midfielder',
+            team='Test Team',
+            jersey_number=99
+        )
+        db.session.add(dummy_player)
+        db.session.commit()
+        
+        return f"<h1>✅ Dummy player added!</h1><p>Name: {dummy_player.name}</p><p><a href='/'>Back to players</a></p>", 201
+    except Exception as e:
+        db.session.rollback()
+        return f"<h1>❌ Error adding dummy player</h1><p>{str(e)}</p>", 500
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
