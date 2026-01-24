@@ -52,8 +52,8 @@ class Match(db.Model):
 def index():
     """Display all players"""
     try:
-        matches = Matches.query.all()
-        return render_template('index.html', matches=matches)
+        matches = Match.query.all()
+        return render_template('index.html', matches=match)
     except Exception as e:
         return f"<h1>Error fetching data</h1><p>{str(e)}</p>", 500
 
