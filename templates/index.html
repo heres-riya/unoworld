@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Players - Database Viewer{% endblock %}
+
+{% block content %}
+<h2>All Players</h2>
+
+{% if players %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Team</th>
+                <th>Jersey Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+                <tr>
+                    <td>{{ player.id }}</td>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.position or 'N/A' }}</td>
+                    <td>{{ player.team or 'N/A' }}</td>
+                    <td>{{ player.jersey_number or 'N/A' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="record-count">
+        Total Players: <strong>{{ players|length }}</strong>
+    </div>
+{% else %}
+    <div class="no-data">
+        <p>No players found. <a href="/create">Add one now!</a></p>
+    </div>
+{% endif %}
+{% endblock %}
