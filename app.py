@@ -79,6 +79,33 @@ def add_dummy():
         db.session.rollback()
         return f"<h1>❌ Error adding dummy player</h1><p>{str(e)}</p>", 500
 
+@app.route('/initdb')
+def initdb():
+    """Initialize database with tables and sample data"""
+    try:
+        # Create all tables
+        db.create_all()
+        
+        # Check if we have any existing players
+        if Player.query.first() is None:
+            # Insert sample data
+            sample_players = [
+                Player(name='Cristiano Ronaldo', position='Forward', team='Manchester United', jersey_number=7),
+                Player(name='Lionel Messi', position='Forward', team='Paris Saint-Germain', jersey_number=30),
+                Player(name='Neymar Jr', position='Forward', team='Paris Saint-Germain', jersey_number=10),
+                Player(name='Kevin De Bruyne', position='Midfielder', team='Manchester City', jersey_number=17),
+            ]
+            
+            db.session.add_all(sample_players)
+            db.session.commit()
+            
+            return f"<h1>✅ Database initialized!</h1><p>Tables created and {len(sample_players)} sample players added.</p><p><a href='/'>View players</a></p>", 201
+        else:
+            return f"<h1>ℹ️ Database already initialized</h1><p>Tables exist with {Player.query.count()} players.</p><p><a href='/'>View players</a></p>", 200
+    except Exception as e:
+        db.session.rollback()
+        return f"<h1>❌ Error initializing database</h1><p>{str(e)}</p>", 500
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
