@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
+import csv
+from datetime import datetime
 
 load_dotenv()
 
@@ -128,6 +130,56 @@ def initmatches():
         return "<h1>✅ Matches table created (if not exists)</h1><p>Schema: id, date, match_number, teams, group, stadium, date_dt</p>", 201
     except Exception as e:
         return f"<h1>❌ Error creating matches table</h1><p>{str(e)}</p>", 500
+
+@app.route('/dummymatches')
+def dummymatches():
+    """Parse matches.csv and insert records into the matches table"""
+    try:
+        # Create table if it doesn't exist
+        db.create_all()
+        
+        # Read and parse CSV file
+        csv_path = os.path.join(os.path.dirname(__file__), 'matches.csv')
+        
+        if not os.path.exists(csv_path):
+            return f"<h1>❌ matches.csv not found</h1><p>Expected at: {csv_path}</p>", 404
+        
+        matches_added = 0
+        errors = []
+        
+        with open(csv_path, 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                try:
+                    # Parse date_dt string to date object
+                    date_dt = None
+                    if row.get('date_dt'):
+                        date_dt = datetime.strptime(row['date_dt'], '%Y-%m-%d').date()
+                    
+                    match = Match(
+                        date=row.get('date'),
+                        match_number=row.get('match_number'),
+                        teams=row.get('teams'),
+                        group=row.get('group'),
+                        stadium=row.get('stadium'),
+                        date_dt=date_dt
+                    )
+                    db.session.add(match)
+                    matches_added += 1
+                except Exception as e:
+                    errors.append(f"Row {reader.line_num}: {str(e)}")
+                    db.session.rollback()
+        
+        db.session.commit()
+        
+        if errors:
+            return f"<h1>⚠️ Partial Import</h1><p>Added {matches_added} matches with {len(errors)} errors.</p><p>Errors: {errors}</p><p><a href='/'>Back</a></p>", 207
+        
+        return f"<h1>✅ Matches imported!</h1><p>Successfully added {matches_added} matches from CSV.</p><p><a href='/'>Back</a></p>", 201
+    
+    except Exception as e:
+        db.session.rollback()
+        return f"<h1>❌ Error importing matches</h1><p>{str(e)}</p>", 500
 
 if __name__ == '__main__':
     with app.app_context():
