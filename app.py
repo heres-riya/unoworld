@@ -163,7 +163,7 @@ def dummymatches():
                     date_dt = None
                     if row.get('date_dt'):
                         date_dt = datetime.strptime(row['date_dt'], '%Y-%m-%d').date()
-                    teams_string row.get('teams')
+                    teams_string = row.get('teams')
                     home_team, away_team = [team.strip() for team in teams_string.split(' v ')]
                     match = Match(
                         date=row.get('date'),
