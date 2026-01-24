@@ -39,7 +39,8 @@ class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(255))
     match_number = db.Column(db.String(50), unique=True)
-    teams = db.Column(db.String(255))
+    team1 = db.Column(db.String(255))
+    team2 = db.Column(db.String(255))    
     group = db.Column(db.String(50))
     stadium = db.Column(db.String(255))
     date_dt = db.Column(db.Date)
@@ -155,11 +156,13 @@ def dummymatches():
                     date_dt = None
                     if row.get('date_dt'):
                         date_dt = datetime.strptime(row['date_dt'], '%Y-%m-%d').date()
-                    
+                    teams_string row.get('teams')
+                    home_team, away_team = [team.strip() for team in teams_string.split(' v ')]
                     match = Match(
                         date=row.get('date'),
                         match_number=row.get('match_number'),
-                        teams=row.get('teams'),
+                        team1=home_team,
+                        team2=away_team,
                         group=row.get('group'),
                         stadium=row.get('stadium'),
                         date_dt=date_dt

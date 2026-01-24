@@ -10,6 +10,10 @@ load_dotenv()
 def init_database():
     """Initialize database with sample data"""
     with app.app_context():
+    # Replace 'matches' with your actual model class name
+        db.metadata.tables['matches'].drop(db.engine)
+        print("Matches table dropped.")
+    with app.app_context():
         # Create all tables
         db.create_all()
         print("✅ Tables created successfully!")
