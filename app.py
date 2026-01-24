@@ -31,6 +31,20 @@ class Player(db.Model):
     def __repr__(self):
         return f'<Player {self.name}>'
 
+# Define Match model
+class Match(db.Model):
+    __tablename__ = 'matches'
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(255))
+    match_number = db.Column(db.String(50), unique=True)
+    teams = db.Column(db.String(255))
+    group = db.Column(db.String(50))
+    stadium = db.Column(db.String(255))
+    date_dt = db.Column(db.Date)
+    
+    def __repr__(self):
+        return f'<Match {self.match_number}>'
+
 @app.route('/')
 def index():
     """Display all players"""
@@ -105,6 +119,15 @@ def initdb():
     except Exception as e:
         db.session.rollback()
         return f"<h1>❌ Error initializing database</h1><p>{str(e)}</p>", 500
+
+@app.route('/initmatches')
+def initmatches():
+    """Create the matches table with the specified schema"""
+    try:
+        db.create_all()
+        return "<h1>✅ Matches table created (if not exists)</h1><p>Schema: id, date, match_number, teams, group, stadium, date_dt</p>", 201
+    except Exception as e:
+        return f"<h1>❌ Error creating matches table</h1><p>{str(e)}</p>", 500
 
 if __name__ == '__main__':
     with app.app_context():
