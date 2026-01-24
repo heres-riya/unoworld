@@ -1,39 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}Players - Database Viewer{% endblock %}
+{% block title %}Schedule Viewer{% endblock %}
 
 {% block content %}
-<h2>All Players</h2>
+<h2>All Matches</h2>
 
-{% if players %}
+{% if matches %}
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Team</th>
-                <th>Jersey Number</th>
+                <th>Match#</th>
+                <th>Team1</th>
+                <th>Team2</th>
+                <th>Venue</th>
             </tr>
         </thead>
         <tbody>
-            {% for player in players %}
+            {% for match in matches %}
                 <tr>
-                    <td>{{ player.id }}</td>
-                    <td>{{ player.name }}</td>
-                    <td>{{ player.position or 'N/A' }}</td>
-                    <td>{{ player.team or 'N/A' }}</td>
-                    <td>{{ player.jersey_number or 'N/A' }}</td>
+                    <td>{{ match.id }}</td>
+                    <td>{{ match.match_number }}</td>
+                    <td>{{ match.team1 or 'N/A' }}</td>
+                    <td>{{ match.team2 or 'N/A' }}</td>
+                    <td>{{ match.stadium or 'N/A' }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
     <div class="record-count">
-        Total Players: <strong>{{ players|length }}</strong>
+        Total Matches: <strong>{{ matches|length }}</strong>
     </div>
 {% else %}
     <div class="no-data">
-        <p>No players found. <a href="/create">Add one now!</a></p>
+        <p>No matches found </p>
     </div>
 {% endif %}
 {% endblock %}

@@ -52,8 +52,8 @@ class Match(db.Model):
 def index():
     """Display all players"""
     try:
-        players = Player.query.all()
-        return render_template('index.html', players=players)
+        matches = Matches.query.all()
+        return render_template('index.html', matches=matches)
     except Exception as e:
         return f"<h1>Error fetching data</h1><p>{str(e)}</p>", 500
 
@@ -99,6 +99,7 @@ def add_dummy():
 
 @app.route('/initdb')
 def initdb():
+    return
     """Initialize database with tables and sample data"""
     try:
         # Create all tables
@@ -141,6 +142,7 @@ def initmatches():
 
 @app.route('/dummymatches')
 def dummymatches():
+    return
     """Parse matches.csv and insert records into the matches table"""
     try:
         # Create table if it doesn't exist
