@@ -101,6 +101,12 @@ def initdb():
     """Initialize database with tables and sample data"""
     try:
         # Create all tables
+
+
+    # Replace 'matches' with your actual model class name
+        db.metadata.tables['matches'].drop(db.engine)
+        print("Matches table dropped.")
+
         db.create_all()
         
         # Check if we have any existing players
