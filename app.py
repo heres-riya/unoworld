@@ -85,7 +85,8 @@ def add_dummy():
         dummy_player = Player(
             name='Dummy Player',
             position='Midfielder',
-            team='Test Team',
+            team1='Test Team',
+            team2='Opponent Team',
             jersey_number=99
         )
         db.session.add(dummy_player)
