@@ -14,6 +14,7 @@
                 <th>Team1</th>
                 <th>Team2</th>
                 <th>Venue</th>
+                <th>Prediction</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +25,7 @@
                     <td>{{ match.team1 or 'N/A' }}</td>
                     <td>{{ match.team2 or 'N/A' }}</td>
                     <td>{{ match.stadium or 'N/A' }}</td>
+                    <td>{{ match.prediction or 'N/A' }}</td>
                 </tr>
             {% endfor %}
         </tbody>
