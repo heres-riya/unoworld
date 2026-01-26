@@ -63,7 +63,9 @@
                 </button>
                 <button type="button" 
                         {% if verdict == 2 %}predict-btn-yes{% endif %}
-                        class="predict-btn draw {% if match.prediction == '3' %}selected{% endif %}" 
+                        class="predict-btn draw
+                             {% if verdict == 2 %} predict-btn-yes {% endif %}
+                         {% if match.prediction == '3' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="3"
                         onclick="selectPrediction({{ match.id }}, '3', this)"
@@ -72,7 +74,9 @@
                 </button>
                 <button type="button" 
                         {% if verdict == 3 %}predict-btn-yes{% endif %}
-                        class="predict-btn team2 {% if match.prediction == '2' %}selected{% endif %}" 
+                        class="predict-btn team2 
+                            {% if verdict == 3 %} predict-btn-yes {% endif %}
+                            {% if match.prediction == '2' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="2"
                         onclick="selectPrediction({{ match.id }}, '2', this)"
