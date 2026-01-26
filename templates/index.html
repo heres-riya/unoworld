@@ -71,6 +71,9 @@
                     {% if not match.prediction %}disabled{% endif %}>
                 Submit and View
             </button>
+            <div> 
+                Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }}
+            </div>
         </form>
 
         {% if match.prediction %}

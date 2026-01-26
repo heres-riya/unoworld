@@ -44,6 +44,9 @@ class Match(db.Model):
     group = db.Column(db.String(50))
     stadium = db.Column(db.String(255))
     date_dt = db.Column(db.Date)
+    win = db.Column(db.Numeric(precision=5, scale=2))
+    loss = db.Column(db.Numeric(precision=5, scale=2))
+    draw = db.Column(db.Numeric(precision=5, scale=2))
     
     def __repr__(self):
         return f'<Match {self.match_number}>'
