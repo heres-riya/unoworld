@@ -10,23 +10,21 @@
             <div class="match-date">{{ match.date }}</div>
             <div class="stadium">{{ match.stadium }}</div>
         </div>
-        {% clean_game = True %}
-	    {% if '/' in match.team1 %}
-    	    {% 
-                set team1 = "Team1" 
-                set clean_game = False 
-            %}
-        {% else %}
-            {% set team1 = match.team1 %}
-        {% endif %}
-	    {% if '/' in match.team2 %}
-    	    {% 
-                set team2 = "Team2"
-                set clean_game = False 
-            %}
-        {% else %}
-            {% set team2 = match.team2 %}
-        {% endif %}
+     {% set clean_game = namespace(value=True) %}
+
+    {% if '/' in match.team1 %}
+        {% set team1 = "Team1" %}
+        {% set clean_game.value = False %}
+    {% else %}
+        {% set team1 = match.team1 %}
+    {% endif %}
+
+    {% if '/' in match.team2 %}
+        {% set team2 = "Team2" %}
+        {% set clean_game.value = False %}
+    {% else %}
+        {% set team2 = match.team2 %}
+    {% endif %}
 
         <div class="teams-container">
             <div class="team">
@@ -78,7 +76,7 @@
                 Submit and View
             </button>
             <div> 
-                {% if match.win > 0 AND clean_game == True %}
+                {% if match.win > 0 and clean_game %}
                     Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }}
                 {% endif %}
             </div>
