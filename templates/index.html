@@ -39,7 +39,9 @@
                 <div class="team-name">{{ match.team2 }}</div>
             </div>
         </div>
-    {% if match.win >= match.draw and match.win >= match.loss %}
+    {% if match.win == 0 %}
+        {% set verdict = 0 %}
+    {% elif match.win >= match.draw and match.win >= match.loss %}
         {% set verdict = 1 %}
     {% elif match.draw >= match.win and match.draw >= match.loss %}
         {% set verdict = 2 %}
