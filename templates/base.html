@@ -379,9 +379,11 @@
     <div class="container">
         <header>
             <h1>⚽ FIFA World Cup 2026</h1>
-            <p class="subtitle">Project Goal26: where AI meets fan predictions [a href="/download-model"]Download Model[/a]</p>
+            <p class="subtitle">
+                Project Goal26: where AI meets fan predictions 
+                <a href="{{ url_for('download_model') }}">Download Model</a>
+            </p>
         </header>
-
         {% block content %}{% endblock %}
     </div>
 
