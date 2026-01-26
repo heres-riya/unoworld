@@ -77,7 +77,7 @@
             </button>
             <div> 
                 {% if match.win > 0 and clean_game %}
-                    Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }}
+                    Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }} | clean_game: {{ clean_game.value }}
                 {% endif %}
             </div>
         </form>
