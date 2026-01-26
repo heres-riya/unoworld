@@ -5,11 +5,22 @@
 {% block content %}
 <div class="matches-grid">
     {% for match in matches %}
-    <div class="match-card {% if match.user_prediction %}submitted{% endif %} {% if match.user_prediction and match.actual_result %}{% if match.user_prediction == match.actual_result %}correct{% else %}incorrect{% endif %}{% endif %}">
+    <div class="match-card {% if match.prediction %}submitted{% endif %} {% if match.prediction and match.actual_result %}{% if match.prediction == match.actual_result %}correct{% else %}incorrect{% endif %}{% endif %}">
         <div class="match-info">
             <div class="match-date">{{ match.date }}</div>
             <div class="stadium">{{ match.stadium }}</div>
         </div>
+
+	    {% if '/' in match.team1 %}
+    	    {% set team1 = "Team1" %}
+        {% else %}
+            {% set team1 = match.team1 %}
+        {% endif %}
+	    {% if '/' in match.team2 %}
+    	    {% set team2 = "Team2" %}
+        {% else %}
+            {% set team2 = match.team2 %}
+        {% endif %}
 
         <div class="teams-container">
             <div class="team">
@@ -28,46 +39,46 @@
         <form id="form_{{ match.id }}" class="prediction-form" onsubmit="event.preventDefault(); submitPrediction({{ match.id }});">
             <div class="prediction-buttons">
                 <button type="button" 
-                        class="predict-btn team1 {% if match.user_prediction == '1' %}selected{% endif %}" 
+                        class="predict-btn team1 {% if match.prediction == '1' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="1"
                         onclick="selectPrediction({{ match.id }}, '1', this)"
-                        {% if match.user_prediction %}disabled{% endif %}>
-                    <span>{{ match.team1 }}</span>
+                        {% if match.prediction %}disabled{% endif %}>
+                    <span>{{ team1 }}</span>
                 </button>
                 <button type="button" 
-                        class="predict-btn draw {% if match.user_prediction == '3' %}selected{% endif %}" 
+                        class="predict-btn draw {% if match.prediction == '3' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="3"
                         onclick="selectPrediction({{ match.id }}, '3', this)"
-                        {% if match.user_prediction %}disabled{% endif %}>
+                        {% if match.prediction %}disabled{% endif %}>
                     <span>Draw</span>
                 </button>
                 <button type="button" 
-                        class="predict-btn team2 {% if match.user_prediction == '2' %}selected{% endif %}" 
+                        class="predict-btn team2 {% if match.prediction == '2' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="2"
                         onclick="selectPrediction({{ match.id }}, '2', this)"
-                        {% if match.user_prediction %}disabled{% endif %}>
-                    <span>{{ match.team2 }}</span>
+                        {% if match.prediction %}disabled{% endif %}>
+                    <span>{{ team2 }}</span>
                 </button>
             </div>
             
             <button type="submit" 
                     id="submit_{{ match.id }}" 
                     class="submit-btn"
-                    {% if match.user_prediction %}disabled{% endif %}
-                    {% if not match.user_prediction %}disabled{% endif %}>
+                    {% if match.prediction %}disabled{% endif %}
+                    {% if not match.prediction %}disabled{% endif %}>
                 🎯 Submit Prediction
             </button>
         </form>
 
-        {% if match.user_prediction %}
+        {% if match.prediction %}
             {% if match.actual_result is none %}
                 <div class="result-message pending">
                     ⏳ Prediction Submitted! Match result pending...
                 </div>
-            {% elif match.user_prediction == match.actual_result %}
+            {% elif match.prediction == match.actual_result %}
                 <div class="result-message correct">
                     ✅ Correct! You predicted it right! 🎉
                 </div>
