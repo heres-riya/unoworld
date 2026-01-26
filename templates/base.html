@@ -380,14 +380,6 @@
         <header>
             <h1>⚽ FIFA World Cup 2026</h1>
             <p class="subtitle">Project Goal26: where AI meets fan predictions [a href="/download-model"]Download Model[/a]</p>
-    try:
-        return send_from_directory(
-            directory=MODEL_DIR, 
-            path='model_features.pkl', 
-            as_attachment=True  # This forces the browser to download the file
-        )
-    except FileNotFoundError:
-        abort(404)</p>
         </header>
 
         {% block content %}{% endblock %}
