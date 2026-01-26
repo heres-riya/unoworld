@@ -140,6 +140,40 @@ def initmatches():
     except Exception as e:
         return f"<h1>❌ Error creating matches table</h1><p>{str(e)}</p>", 500
 
+
+@app.route('/submit-prediction', methods=['POST'])
+def submit_prediction():
+    match_id = request.form.get('match_id')
+    prediction = request.form.get('prediction')  # '1', '2', or '3'
+    
+    # Store prediction in session (in production, use database)
+    if 'predictions' not in session:
+        session['predictions'] = {}
+    
+    session['predictions'][match_id] = prediction
+    session.modified = True
+    
+    # Find the match and check result
+    match = next((m for m in matches_data if str(m['id']) == match_id), None)
+    
+    if not match:
+        return jsonify({'success': False, 'message': 'Match not found'})
+    
+    is_correct = None
+    if match['actual_result'] is not None:
+        is_correct = (prediction == match['actual_result'])
+    
+    return jsonify({
+        'success': True,
+        'is_correct': is_correct,
+        'actual_result': match['actual_result'],
+        'team1_name': match['team1'],
+        'team2_name': match['team2']
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
+    
 @app.route('/dummymatches')
 def dummymatches():
     return
