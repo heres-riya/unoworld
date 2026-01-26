@@ -8,7 +8,7 @@ from datetime import datetime
 load_dotenv()
 
 app = Flask(__name__)
-
+MODEL_DIR = os.path.abspath(os.path.dirname(__file__))
 # Database configuration
 DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
