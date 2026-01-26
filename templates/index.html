@@ -41,6 +41,8 @@
         </div>
     {% if match.win == 0 %}
         {% set verdict = 0 %}
+     {% elif team1 = "Team1" or team2 = "Team2" %}
+        {% set verdict = 0 %}   
     {% elif match.win >= match.draw and match.win >= match.loss %}
         {% set verdict = 1 %}
     {% elif match.draw >= match.win and match.draw >= match.loss %}
@@ -96,8 +98,8 @@
             </button>
             {% endif %}
             <div> 
-                {% if match.win > 0 and clean_game %}
-                    Prediction: Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }} | clean_game: {{ clean_game.value }}
+                {% if verdict > 0 %}
+                    Prediction: Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }} 
                 {% endif %}
             </div>
         </form>
