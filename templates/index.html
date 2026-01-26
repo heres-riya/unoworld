@@ -41,7 +41,7 @@
         </div>
     {% if match.win == 0 %}
         {% set verdict = 0 %}
-     {% elif team1 = "Team1" or team2 = "Team2" %}
+    {% elif team1 == "Team1" or team2 == "Team2" %}
         {% set verdict = 0 %}   
     {% elif match.win >= match.draw and match.win >= match.loss %}
         {% set verdict = 1 %}
