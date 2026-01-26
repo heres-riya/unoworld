@@ -39,10 +39,19 @@
                 <div class="team-name">{{ match.team2 }}</div>
             </div>
         </div>
+    {% if match.win >= match.draw and match.win >= match.loss %}
+        {% set verdict = 1 %}
+    {% elif match.draw >= match.win and match.draw >= match.loss %}
+        {% set verdict = 2 %}
+    {% else %}
+        {% set verdict = 3 %}
+    {% endif %}
 
         <form id="form_{{ match.id }}" class="prediction-form" onsubmit="event.preventDefault(); submitPrediction({{ match.id }});">
             <div class="prediction-buttons">
-                <button type="button" 
+                <button type="button 
+                        {% if verdict == 1 %}predict-btn-yes{% endif %}
+                           " 
                         class="predict-btn team1 {% if match.prediction == '1' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="1"
@@ -51,6 +60,7 @@
                     <span>{{ team1 }}</span>
                 </button>
                 <button type="button" 
+                        {% if verdict == 2 %}predict-btn-yes{% endif %}
                         class="predict-btn draw {% if match.prediction == '3' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="3"
@@ -59,6 +69,7 @@
                     <span>Draw</span>
                 </button>
                 <button type="button" 
+                        {% if verdict == 3 %}predict-btn-yes{% endif %}
                         class="predict-btn team2 {% if match.prediction == '2' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="2"
@@ -78,7 +89,7 @@
             {% endif %}
             <div> 
                 {% if match.win > 0 and clean_game %}
-                    Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }} | clean_game: {{ clean_game.value }}
+                    Prediction: Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }} | clean_game: {{ clean_game.value }}
                 {% endif %}
             </div>
         </form>
