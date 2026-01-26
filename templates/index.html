@@ -1,41 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}Project Goal26{% endblock %}
+{% block title %}FIFA World Cup 2026 - Predict & Win{% endblock %}
 
 {% block content %}
-<h2>All Matches</h2>
+<form method="POST" action="/submit-predictions">
+    <div class="matches-grid">
+        {% for match in matches %}
+        <div class="match-card">
+            <div class="match-info">
+                <div class="match-date">{{ match.date }}</div>
+                <div class="stadium">{{ match.id }}   {{ match.stadium }}</div>
+            </div>
 
-{% if matches %}
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Match#</th>
-                <th>Team1</th>
-                <th>Team2</th>
-                <th>Venue</th>
-                <th>Prediction</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for match in matches %}
-                <tr>
-                    <td>{{ match.id }}</td>
-                    <td>{{ match.match_number }}</td>
-                    <td>{{ match.team1 or 'N/A' }}</td>
-                    <td>{{ match.team2 or 'N/A' }}</td>
-                    <td>{{ match.stadium or 'N/A' }}</td>
-                    <td>{{ match.prediction or 'N/A' }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div class="record-count">
-        Total Matches: <strong>{{ matches|length }}</strong>
+            <div class="teams-container">
+                <div class="team">
+                    <div class="team-flag">{{ match.team1_flag or 'N/A' }}</div>
+                    <div class="team-name">{{ match.team1 }}</div>
+                </div>
+                
+                <div class="vs">VS</div>
+                
+                <div class="team">
+                    <div class="team-flag">{{ match.team2_flag or 'N/A' }}</div>
+                    <div class="team-name">{{ match.team2 }}</div>
+                </div>
+            </div>
+
+            <div class="prediction-buttons">
+                <button type="button" class="predict-btn team1" data-match="{{ match.id }}" data-prediction="team1">
+                    <span>{{ match.team1 }}</span>
+                </button>
+                <button type="button" class="predict-btn draw" data-match="{{ match.id }}" data-prediction="draw">
+                    <span>Draw</span>
+                </button>
+                <button type="button" class="predict-btn team2" data-match="{{ match.id }}" data-prediction="team2">
+                    <span>{{ match.team2 }}</span>
+                </button>
+            </div>
+            
+            <input type="hidden" name="match_{{ match.id }}" id="prediction_{{ match.id }}" value="">
+        </div>
+        {% endfor %}
     </div>
-{% else %}
-    <div class="no-data">
-        <p>No matches found </p>
+
+    <div class="submit-all">
+        <button type="submit" class="submit-all-btn">🎯 Submit All Predictions</button>
     </div>
-{% endif %}
+</form>
 {% endblock %}
