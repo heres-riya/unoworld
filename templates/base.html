@@ -381,7 +381,7 @@
             <h1>⚽ FIFA World Cup 2026</h1>
             <p class="subtitle">
                 Project Goal26: where AI meets fan predictions 
-                <a href="{{ url_for('download_model') }}" style="color: #FFFFFF; text-decoration: none; font-weight: bold;">[ Download Model ]</a>
+                <a href="{{ url_for('static', filename='model_features.pkl') }}" style="color: #FFFFFF; text-decoration: none; font-weight: bold;">[ Download Model]</a>
             </p>
         </header>
         {% block content %}{% endblock %}
