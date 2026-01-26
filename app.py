@@ -176,6 +176,17 @@ def submit_prediction():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/download-model')
+def download_model():
+    try:
+        return send_from_directory(
+            directory=MODEL_DIR, 
+            path='model_features.pkl', 
+            as_attachment=True  # This forces the browser to download the file
+        )
+    except FileNotFoundError:
+        abort(404)
     
 @app.route('/dummymatches')
 def dummymatches():
