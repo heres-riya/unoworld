@@ -67,7 +67,7 @@
                     <span>{{ team2 }}</span>
                 </button>
             </div>
-            
+            {% if False %}
             <button type="submit" 
                     id="submit_{{ match.id }}" 
                     class="submit-btn"
@@ -75,6 +75,7 @@
                     {% if not match.prediction %}disabled{% endif %}>
                 Submit and View
             </button>
+            {% endif %}
             <div> 
                 {% if match.win > 0 and clean_game %}
                     Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }} | clean_game: {{ clean_game.value }}
