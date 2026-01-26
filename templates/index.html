@@ -49,10 +49,12 @@
 
         <form id="form_{{ match.id }}" class="prediction-form" onsubmit="event.preventDefault(); submitPrediction({{ match.id }});">
             <div class="prediction-buttons">
-                <button type="button 
-                        {% if verdict == 1 %}predict-btn-yes{% endif %}
-                           " 
-                        class="predict-btn team1 {% if match.prediction == '1' %}selected{% endif %}" 
+                <button type="button" 
+                        class="predict-btn team1 
+
+                            {% if verdict == 1 %} predict-btn-yes {% endif %}
+
+                        {% if match.prediction == '1' %}selected{% endif %}" 
                         data-match="{{ match.id }}" 
                         data-prediction="1"
                         onclick="selectPrediction({{ match.id }}, '1', this)"
