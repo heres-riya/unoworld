@@ -1,8 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BD799KG0LB"></script>
 <script>
@@ -109,6 +107,20 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
         }
 
+        .match-card.submitted {
+            border: 3px solid #4CAF50;
+        }
+
+        .match-card.correct {
+            border: 3px solid #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .match-card.incorrect {
+            border: 3px solid #f44336;
+            background: rgba(244, 67, 54, 0.1);
+        }
+
         .match-info {
             text-align: center;
             margin-bottom: 20px;
@@ -169,10 +181,14 @@
             background-clip: text;
         }
 
+        .prediction-form {
+            margin-top: 20px;
+        }
+
         .prediction-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 20px;
+            margin-bottom: 15px;
         }
 
         .predict-btn {
@@ -208,9 +224,14 @@
             height: 300px;
         }
 
-        .predict-btn:hover {
+        .predict-btn:hover:not(:disabled) {
             border-color: #667eea;
             transform: scale(1.05);
+        }
+
+        .predict-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .predict-btn.team1 {
@@ -237,6 +258,56 @@
             z-index: 1;
         }
 
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result-message {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            animation: slideIn 0.5s ease;
+        }
+
+        .result-message.correct {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .result-message.incorrect {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+
+        .result-message.pending {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -252,6 +323,17 @@
             from {
                 opacity: 0;
                 transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
             }
             to {
                 opacity: 1;
@@ -280,32 +362,9 @@
             }
         }
 
-        .submit-all {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .submit-all-btn {
-            padding: 18px 50px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Poppins', sans-serif;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .submit-all-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-        }
-
-        .submit-all-btn:active {
-            transform: scale(0.98);
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
         }
 
         {% block extra_css %}{% endblock %}
@@ -322,41 +381,92 @@
     </div>
 
     <script>
-        document.querySelectorAll('.predict-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const matchId = this.dataset.match;
-                const prediction = this.dataset.prediction;
-                
-                // Remove selected class from all buttons in this match
-                const matchButtons = document.querySelectorAll(`[data-match="${matchId}"]`);
-                matchButtons.forEach(b => b.classList.remove('selected'));
-                
-                // Add selected class to clicked button
-                this.classList.add('selected');
-                
-                // Update hidden input
-                document.getElementById(`prediction_${matchId}`).value = prediction;
-            });
-        });
+        function selectPrediction(matchId, prediction, buttonElement) {
+            // Remove selected class from all buttons in this match
+            const matchButtons = document.querySelectorAll(`[data-match="${matchId}"]`);
+            matchButtons.forEach(b => b.classList.remove('selected'));
+            
+            // Add selected class to clicked button
+            buttonElement.classList.add('selected');
+            
+            // Enable submit button
+            const submitBtn = document.getElementById(`submit_${matchId}`);
+            if (submitBtn) {
+                submitBtn.disabled = false;
+            }
+        }
 
-        // Form validation
-        const form = document.querySelector('form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                const predictions = document.querySelectorAll('input[type="hidden"][name^="match_"]');
-                let allPredicted = true;
-                
-                predictions.forEach(input => {
-                    if (!input.value) {
-                        allPredicted = false;
-                    }
+        async function submitPrediction(matchId) {
+            const selectedBtn = document.querySelector(`[data-match="${matchId}"].selected`);
+            
+            if (!selectedBtn) {
+                alert('⚠️ Please select a prediction first!');
+                return;
+            }
+
+            const prediction = selectedBtn.dataset.prediction;
+            const form = document.getElementById(`form_${matchId}`);
+            const card = form.closest('.match-card');
+            
+            // Show loading state
+            card.classList.add('loading');
+            
+            try {
+                const response = await fetch('/submit-prediction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `match_id=${matchId}&prediction=${prediction}`
                 });
+
+                const result = await response.json();
                 
-                if (!allPredicted) {
-                    e.preventDefault();
-                    alert('⚠️ Please make predictions for all matches before submitting!');
+                // Remove loading state
+                card.classList.remove('loading');
+                
+                if (result.success) {
+                    // Disable all buttons
+                    const buttons = form.querySelectorAll('.predict-btn, .submit-btn');
+                    buttons.forEach(btn => btn.disabled = true);
+                    
+                    // Show result message
+                    let resultHTML = '';
+                    if (result.actual_result === null) {
+                        resultHTML = `
+                            <div class="result-message pending">
+                                ⏳ Prediction Submitted! Match result pending...
+                            </div>
+                        `;
+                    } else if (result.is_correct) {
+                        card.classList.add('correct');
+                        resultHTML = `
+                            <div class="result-message correct">
+                                ✅ Correct! You predicted it right! 🎉
+                            </div>
+                        `;
+                    } else {
+                        card.classList.add('incorrect');
+                        const actualResultText = result.actual_result === '1' ? result.team1_name : 
+                                                 result.actual_result === '2' ? result.team2_name : 
+                                                 'Draw';
+                        resultHTML = `
+                            <div class="result-message incorrect">
+                                ❌ Wrong! The actual result was: ${actualResultText}
+                            </div>
+                        `;
+                    }
+                    
+                    form.insertAdjacentHTML('afterend', resultHTML);
+                    card.classList.add('submitted');
+                } else {
+                    alert('Error: ' + result.message);
                 }
-            });
+            } catch (error) {
+                card.classList.remove('loading');
+                alert('An error occurred. Please try again.');
+                console.error('Error:', error);
+            }
         }
 
         {% block extra_js %}{% endblock %}

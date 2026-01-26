@@ -3,48 +3,84 @@
 {% block title %}FIFA World Cup 2026 - Predict & Win{% endblock %}
 
 {% block content %}
-<form method="POST" action="/submit-predictions">
-    <div class="matches-grid">
-        {% for match in matches %}
-        <div class="match-card">
-            <div class="match-info">
-                <div class="match-date">{{ match.date }}</div>
-                <div class="stadium">{{ match.id }}   {{ match.stadium }}</div>
-            </div>
+<div class="matches-grid">
+    {% for match in matches %}
+    <div class="match-card {% if match.user_prediction %}submitted{% endif %} {% if match.user_prediction and match.actual_result %}{% if match.user_prediction == match.actual_result %}correct{% else %}incorrect{% endif %}{% endif %}">
+        <div class="match-info">
+            <div class="match-date">{{ match.date }}</div>
+            <div class="stadium">{{ match.stadium }}</div>
+        </div>
 
-            <div class="teams-container">
-                <div class="team">
-                    <div class="team-flag">{{ match.team1_flag or 'N/A' }}</div>
-                    <div class="team-name">{{ match.team1 }}</div>
-                </div>
-                
-                <div class="vs">VS</div>
-                
-                <div class="team">
-                    <div class="team-flag">{{ match.team2_flag or 'N/A' }}</div>
-                    <div class="team-name">{{ match.team2 }}</div>
-                </div>
+        <div class="teams-container">
+            <div class="team">
+                <div class="team-flag">{{ match.team1_flag }}</div>
+                <div class="team-name">{{ match.team1 }}</div>
             </div>
+            
+            <div class="vs">VS</div>
+            
+            <div class="team">
+                <div class="team-flag">{{ match.team2_flag }}</div>
+                <div class="team-name">{{ match.team2 }}</div>
+            </div>
+        </div>
 
+        <form id="form_{{ match.id }}" class="prediction-form" onsubmit="event.preventDefault(); submitPrediction({{ match.id }});">
             <div class="prediction-buttons">
-                <button type="button" class="predict-btn team1" data-match="{{ match.id }}" data-prediction="team1">
+                <button type="button" 
+                        class="predict-btn team1 {% if match.user_prediction == '1' %}selected{% endif %}" 
+                        data-match="{{ match.id }}" 
+                        data-prediction="1"
+                        onclick="selectPrediction({{ match.id }}, '1', this)"
+                        {% if match.user_prediction %}disabled{% endif %}>
                     <span>{{ match.team1 }}</span>
                 </button>
-                <button type="button" class="predict-btn draw" data-match="{{ match.id }}" data-prediction="draw">
+                <button type="button" 
+                        class="predict-btn draw {% if match.user_prediction == '3' %}selected{% endif %}" 
+                        data-match="{{ match.id }}" 
+                        data-prediction="3"
+                        onclick="selectPrediction({{ match.id }}, '3', this)"
+                        {% if match.user_prediction %}disabled{% endif %}>
                     <span>Draw</span>
                 </button>
-                <button type="button" class="predict-btn team2" data-match="{{ match.id }}" data-prediction="team2">
+                <button type="button" 
+                        class="predict-btn team2 {% if match.user_prediction == '2' %}selected{% endif %}" 
+                        data-match="{{ match.id }}" 
+                        data-prediction="2"
+                        onclick="selectPrediction({{ match.id }}, '2', this)"
+                        {% if match.user_prediction %}disabled{% endif %}>
                     <span>{{ match.team2 }}</span>
                 </button>
             </div>
             
-            <input type="hidden" name="match_{{ match.id }}" id="prediction_{{ match.id }}" value="">
-        </div>
-        {% endfor %}
-    </div>
+            <button type="submit" 
+                    id="submit_{{ match.id }}" 
+                    class="submit-btn"
+                    {% if match.user_prediction %}disabled{% endif %}
+                    {% if not match.user_prediction %}disabled{% endif %}>
+                🎯 Submit Prediction
+            </button>
+        </form>
 
-    <div class="submit-all">
-        <button type="submit" class="submit-all-btn">🎯 Submit All Predictions</button>
+        {% if match.user_prediction %}
+            {% if match.actual_result is none %}
+                <div class="result-message pending">
+                    ⏳ Prediction Submitted! Match result pending...
+                </div>
+            {% elif match.user_prediction == match.actual_result %}
+                <div class="result-message correct">
+                    ✅ Correct! You predicted it right! 🎉
+                </div>
+            {% else %}
+                <div class="result-message incorrect">
+                    ❌ Wrong! The actual result was: 
+                    {% if match.actual_result == '1' %}{{ match.team1 }}
+                    {% elif match.actual_result == '2' %}{{ match.team2 }}
+                    {% else %}Draw{% endif %}
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
-</form>
+    {% endfor %}
+</div>
 {% endblock %}
