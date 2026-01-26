@@ -72,7 +72,9 @@
                 Submit and View
             </button>
             <div> 
-                Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }}
+                {% if match.win > 0 %}
+                    Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }}
+                {% endif %}
             </div>
         </form>
 
