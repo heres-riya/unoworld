@@ -98,11 +98,11 @@
             </button>
             {% endif %}
             <div> 
-                {% if verdict > 0 %}
-                    Prediction: Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }} 
-                {% elif %}
-                    Prediction: Pending team assignment
-                {% endif %}
+            {% if verdict > 0 %}
+                Prediction: Win: {{ match.win }} | Draw: {{ match.draw }} | Loss: {{ match.loss }} 
+            {% else %}
+                Prediction: Pending team assignment
+            {% endif %}
             </div>
         </form>
 
