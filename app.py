@@ -207,7 +207,7 @@ def student_dashboard():
 
     student = Student.query.get(student_id)
     # Get courses the student is NOT already in
-    available_courses = None # Course.query.filter(~Course.students.contains(student)).all()
+    available_courses = Course.query.filter(~Course.students.contains(student)).all()
     courses = Course.query.all()
     return render_template('portal.html', courses=courses, student=student, available_courses=available_courses)
 
