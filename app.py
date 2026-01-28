@@ -27,7 +27,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-change-this'
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'student_dashboard'
 
 # Association Table for Many-to-Many relationship
 enrollments = db.Table('enrollments',
@@ -103,46 +103,10 @@ def admin():
     return render_template('admin.html', students=students, courses=courses)
 
 # --- AUTH ROUTES ---
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        if Student.query.filter_by(email=email).first():
-            flash('Email already registered!')
-            return redirect(url_for('register'))
-
-        new_student = Student(name=name, email=email)
-        new_student.set_password(password)
-        db.session.add(new_student)
-        db.session.commit()
-        return redirect(url_for('login'))
-    return render_template('register.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    print("Login route accessed")
-    if request.method == 'POST':
-        print("POST request received")
-        email = request.form.get('email')
-        password = request.form.get('password')
-        student = Student.query.filter_by(email=email).first()
-
-        if student and student.check_password(password):
-            session['student_id'] = student.id
-            session['user_name'] = student.name
-            return redirect(url_for('student_dashboard'))
-        flash('Invalid credentials')
-    print("About to render login.html")
-    google_client_id = os.getenv('GOOGLE_CLIENT_ID', '')
-    return render_template('login.html', google_client_id=google_client_id)
-
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('student_dashboard'))
 
 @app.route('/auth/google', methods=['POST'])
 def auth_google():
@@ -193,23 +157,25 @@ def auth_google():
     except Exception as e:
         return {'error': str(e)}, 500
 
-@app.route('/signup', methods = ['GET', 'POST'])
-def signup():
-    register()
-    return redirect(url_for('register'))
-    
+
 # --- STUDENT PORTAL ROUTES --- MAIN STUDENT PAGE
 @app.route('/dashboard')
 def student_dashboard():
     student_id = session.get('student_id')
-    if not student_id:
-        return redirect(url_for('login'))
-
-    student = Student.query.get(student_id)
-    # Get courses the student is NOT already in
-    available_courses = Course.query.filter(~Course.students.contains(student)).all()
+    student = None
+    available_courses = []
+    
+    if student_id:
+        student = Student.query.get(student_id)
+        # Get courses the student is NOT already in
+        available_courses = Course.query.filter(~Course.students.contains(student)).all()
+    else:
+        # Show all courses to unauthenticated users
+        available_courses = Course.query.all()
+    
     courses = Course.query.all()
-    return render_template('portal.html', courses=courses, student=student, available_courses=available_courses)
+    google_client_id = os.getenv('GOOGLE_CLIENT_ID', '')
+    return render_template('portal.html', courses=courses, student=student, available_courses=available_courses, google_client_id=google_client_id)
 
 @app.route('/enroll/<int:course_id>')
 def enroll_student(course_id):

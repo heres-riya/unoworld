@@ -9,13 +9,17 @@
             <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
           </svg>
         </div>
-        <span style="font-weight: 700; font-size: 1.125rem;">LearnHub</span>
+        <span style="font-weight: 700; font-size: 1.125rem;">UnoWorld</span>
       </div>
       <div class="nav-links">
         <a href="/" class="nav-link">Home</a>
         <a href="/courses" class="nav-link" style="color: hsl(var(--foreground));">Courses</a>
         <a href="/dashboard" class="nav-link">Dashboard</a>
-        <a href="/logout" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Log Out </a>
+        {% if session.get('student_id') %}
+          <a href="/logout" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Log Out </a>
+        {% else %}
+          <div id="google_login_btn" style="display: inline-block;"></div>
+        {% endif %}
       </div>
     </div>
   </nav>
@@ -26,19 +30,33 @@
 
 <!-- Header -->
   <div style="margin-bottom: 3rem;">
-    <p style="color: hsl(var(--muted-foreground)); font-size: 4.5rem; max-width: 42rem; margin-bottom: 2rem;"> <b>Welcome, {{ student.name }}</p></b>
+    <p style="color: hsl(var(--muted-foreground)); font-size: 4.5rem; max-width: 42rem; margin-bottom: 2rem;" > 
+      <b>
+        {% if student %}
+          Welcome, {{ student.name }}
+        {% else %}
+          Welcome to UnoWorld
+        {% endif %}
+      </b>
+    </p>
 
     <br><br>
     <br> <br>
+    {% if student %}
      <h1 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem;">Enrolled Courses</h1>
       <p style="color: hsl(var(--muted-foreground)); font-size: 1.125rem; max-width: 42rem; margin-bottom: 2rem;">
         These are the courses you are enrolled in.
       </p>
+    {% else %}
+      <p style="color: hsl(var(--muted-foreground)); font-size: 1.125rem; max-width: 42rem; margin-bottom: 2rem;">
+        Sign in with Google to enroll in courses and start learning.
+      </p>
+    {% endif %}
 
 
     <!-- Courses Grid -->
     <div class="courses-grid">
-
+        {% if student %}
         {% for c in student.courses %}
 
             {% if c.image is none %}
@@ -79,6 +97,7 @@
           </div>
         </div>
          {% endfor %}
+        {% endif %}
     </div>
     <!-- Courses Grid End -->
 
@@ -131,7 +150,11 @@
               <div class="course-price">$0.00</div>
               <div class="course-instructor">by {{ c.instructor }}</div>
             </div>
-            <button class="btn-enroll">Enroll Now</button>
+            {% if session.get('student_id') %}
+              <button class="btn-enroll">Enroll Now</button>
+            {% else %}
+              <button class="btn-enroll" disabled style="opacity: 0.5; cursor: not-allowed;">Sign in to Enroll</button>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -159,4 +182,44 @@
 
 
 </div>
+
+<!-- Google Sign In Script -->
+{% if not session.get('student_id') %}
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+  window.onload = function() {
+    google.accounts.id.initialize({
+      client_id: '{{ google_client_id }}',
+      callback: handleCredentialResponse
+    });
+    google.accounts.id.renderButton(
+      document.getElementById('google_login_btn'),
+      { theme: 'outline', size: 'large', width: '200' }
+    );
+  };
+  
+  function handleCredentialResponse(response) {
+    // Send the token to your backend
+    fetch('/auth/google', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        credential: response.credential
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        // Redirect to dashboard
+        window.location.href = data.redirect;
+      } else {
+        alert('Login failed: ' + data.error);
+      }
+    });
+  }
+</script>
+{% endif %}
+
 {% endblock %}
