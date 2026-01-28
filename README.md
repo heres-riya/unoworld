@@ -14,7 +14,7 @@ A Flask web application using SQLAlchemy ORM to connect to PostgreSQL and displa
 ## Project Structure
 
 ```
-goal26/
+unoworld/
 ├── app.py                 # Main Flask application with SQLAlchemy models
 ├── init_db.py            # Database initialization script
 ├── requirements.txt       # Python dependencies
@@ -22,9 +22,7 @@ goal26/
 ├── runtime.txt           # Python version for Heroku
 ├── .env.example          # Example environment variables
 └── templates/
-    ├── base.html         # Base template with styling
     ├── index.html        # Players display page
-    └── create.html       # Add player form
 ```
 
 ## Prerequisites
