@@ -8,7 +8,7 @@
 </head>
 <body>
   <div style="min-height: 100vh; display: flex; flex-direction: column;">
-    {% if not (request.path == '/login' or request.path == '/register') %}
+    {% if not (request.path == '/login' or request.path == '/register' or request.path == '/dashboard') %}
     <nav class="navbar navbar-dark bg-dark mb-4">
             <div class="container" style=" font-size: 50px; display: flex; flex-direction: column; align-items:center; g justify-content: center; gap: 1.5rem; padding = 2rem;">
             <b>Course Registration</b> 
