@@ -70,15 +70,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    student_id = session.get('student_id')
-    if student_id:
-        student = Student.query.get(student_id)
-        if (student):
-            return redirect(url_for('student_dashboard'))    
-    students = None # Student.query.all()
-    courses = None # Course.query.all()
-
-    return render_template('index.html', students=students, courses=courses)
+    return redirect(url_for('student_dashboard'))
 
 
 
