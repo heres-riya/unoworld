@@ -55,6 +55,11 @@ class Student(db.Model):
 
 @app.route('/')
 def index():
+
+
+    return render_template('index.html', students=None, courses=None)
+
+
     #student_id = session.get('student_id')
     student_id = False
     if student_id:
