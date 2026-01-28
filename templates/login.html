@@ -40,6 +40,20 @@
           </button>
         </form>
 
+        <!-- Divider -->
+        <div style="display: flex; align-items: center; gap: 1rem; margin: 2rem 0;">
+          <div style="flex: 1; height: 1px; background: hsl(var(--border));"></div>
+          <span style="color: hsl(var(--muted-foreground)); font-size: 0.875rem;">OR</span>
+          <div style="flex: 1; height: 1px; background: hsl(var(--border));"></div>
+        </div>
+
+        <!-- Google Sign In Button -->
+        <div id="g_id_onload"
+             data-client_id="{{ google_client_id }}"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" style="width: 100%; display: flex; justify-content: center;"></div>
+
         <p style="text-align: center; color: hsl(var(--muted-foreground)); margin-top: 1.5rem;">
           Don't have an account? <a href="/signup">Sign up</a>
         </p>
@@ -63,6 +77,40 @@
       <style>@media (min-width: 1024px) { .bg-gradient-hero { display: block !important; } }</style>
     </div>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      function handleCredentialResponse(response) {
+        // Send the token to your backend
+        fetch('/auth/google', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            credential: response.credential
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            // Redirect to dashboard
+            window.location.href = data.redirect;
+          } else {
+            alert('Login failed: ' + data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred during login');
+        });
+      }
+
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: '{{ google_client_id }}'
+        });
+      }
+    </script>
 
 
 {% endblock %}

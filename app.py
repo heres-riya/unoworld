@@ -1,11 +1,15 @@
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from google.auth.transport.requests import Request
+from google.oauth2 import id_token
 
 import os
 from dotenv import load_dotenv
 import csv
 from datetime import datetime
+import requests
 
 load_dotenv()
 
@@ -18,8 +22,12 @@ if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'postgresql://postgres:postgres@localhost:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-change-this')
 
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 # Association Table for Many-to-Many relationship
 enrollments = db.Table('enrollments',
@@ -38,11 +46,12 @@ class Course(db.Model):
 
 # ... (rest of your imports)
 
-class Student(db.Model):
+class Student(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
+    google_id = db.Column(db.String(256), unique=True, nullable=True)
     courses = db.relationship('Course', secondary=enrollments, backref='students')
 
     @property
@@ -54,6 +63,10 @@ class Student(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Student.query.get(int(user_id))
 
 @app.route('/')
 def index():
@@ -120,15 +133,65 @@ def login():
         if student and student.check_password(password):
             session['student_id'] = student.id
             session['user_name'] = student.name
-            return redirect(url_for('main.student_dashboard'))
+            return redirect(url_for('student_dashboard'))
         flash('Invalid credentials')
     print("About to render login.html")
-    return render_template('login.html')
+    google_client_id = os.getenv('GOOGLE_CLIENT_ID', '')
+    return render_template('login.html', google_client_id=google_client_id)
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('main.login'))
+    return redirect(url_for('login'))
+
+@app.route('/auth/google', methods=['POST'])
+def auth_google():
+    """Handle Google OAuth token and create/login user"""
+    try:
+        token = request.json.get('credential')
+        
+        if not token:
+            return {'error': 'No token provided'}, 400
+        
+        # Get Google's public keys and verify the token
+        GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+        
+        idinfo = id_token.verify_oauth2_token(token, Request(), GOOGLE_CLIENT_ID)
+        
+        # Get user info from token
+        email = idinfo['email']
+        name = idinfo.get('name', email)
+        google_id = idinfo['sub']
+        
+        # Check if user exists
+        user = Student.query.filter_by(email=email).first()
+        
+        if not user:
+            # Create new user with Google OAuth
+            user = Student(
+                name=name,
+                email=email,
+                google_id=google_id
+            )
+            db.session.add(user)
+            db.session.commit()
+        elif not user.google_id:
+            # Link Google account to existing user
+            user.google_id = google_id
+            db.session.commit()
+        
+        # Log the user in
+        session['student_id'] = user.id
+        session['user_name'] = user.name
+        login_user(user)
+        
+        return {'success': True, 'redirect': url_for('student_dashboard')}
+    
+    except ValueError as e:
+        # Invalid token
+        return {'error': 'Invalid token'}, 401
+    except Exception as e:
+        return {'error': str(e)}, 500
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def signup():
