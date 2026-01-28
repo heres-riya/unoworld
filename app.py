@@ -74,7 +74,7 @@ def index():
     if student_id:
         student = Student.query.get(student_id)
         if (student):
-            return redirect(url_for('main.student_dashboard'))    
+            return redirect(url_for('student_dashboard'))    
     students = None # Student.query.all()
     courses = None # Course.query.all()
 
@@ -112,13 +112,13 @@ def register():
 
         if Student.query.filter_by(email=email).first():
             flash('Email already registered!')
-            return redirect(url_for('main.register'))
+            return redirect(url_for('register'))
 
         new_student = Student(name=name, email=email)
         new_student.set_password(password)
         db.session.add(new_student)
         db.session.commit()
-        return redirect(url_for('main.login'))
+        return redirect(url_for('login'))
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -196,14 +196,14 @@ def auth_google():
 @app.route('/signup', methods = ['GET', 'POST'])
 def signup():
     register()
-    return redirect(url_for('main.register'))
+    return redirect(url_for('register'))
     
 # --- STUDENT PORTAL ROUTES --- MAIN STUDENT PAGE
 @app.route('/dashboard')
 def student_dashboard():
     student_id = session.get('student_id')
     if not student_id:
-        return redirect(url_for('main.login'))
+        return redirect(url_for('login'))
 
     student = Student.query.get(student_id)
     # Get courses the student is NOT already in
@@ -214,14 +214,14 @@ def student_dashboard():
 @app.route('/enroll/<int:course_id>')
 def enroll_student(course_id):
     student_id = session.get('student_id')
-    if not student_id: return redirect(url_for('main.login'))
+    if not student_id: return redirect(url_for('login'))
 
     student = Student.query.get(student_id)
     course = Course.query.get(course_id)
     if course not in student.courses:
         student.courses.append(course)
         db.session.commit()
-    return redirect(url_for('main.student_dashboard'))
+    return redirect(url_for('student_dashboard'))
 
 # --- ADMIN ACTIONS ---
 @app.route('/add_course', methods=['POST'])
@@ -230,7 +230,7 @@ def add_course():
     instructor = request.form.get('instructor')
     db.session.add(Course(course_name=name, instructor=instructor))
     db.session.commit()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('index'))
 
 
 
