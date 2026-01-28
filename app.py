@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
@@ -56,12 +56,7 @@ class Student(db.Model):
 @app.route('/')
 def index():
 
-
-    return render_template('index.html', students=None, courses=None)
-
-
-    #student_id = session.get('student_id')
-    student_id = False
+    student_id = session.get('student_id')
     if student_id:
         student = Student.query.get(student_id)
         if (student):
