@@ -13,8 +13,6 @@
       </div>
       <div class="nav-links">
         <a href="/" class="nav-link">Home</a>
-        <a href="/courses" class="nav-link" style="color: hsl(var(--foreground));">Courses</a>
-        <a href="/dashboard" class="nav-link">Dashboard</a>
         {% if session.get('student_id') %}
           <a href="/logout" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Log Out </a>
         {% else %}
