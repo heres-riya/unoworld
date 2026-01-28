@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LearnHub</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div style="min-height: 100vh; display: flex; flex-direction: column;">
+    {% if not (request.path == '/login' or request.path == '/register') %}
+    <nav class="navbar navbar-dark bg-dark mb-4">
+            <div class="container" style=" font-size: 50px; display: flex; flex-direction: column; align-items:center; g justify-content: center; gap: 1.5rem; padding = 2rem;">
+            <b>Course Registration</b> 
+                <p style = "font-size: 40px;">  Welcome user, </p>
+                <br> 
+                <p style = "font-size: 30px;">  Please Login or Register to continue </p>
+            <div class="d-flex">
+                {% if session.get('student_id') %}
+                    <span class="navbar-text me-3">Hello, {{ session.get('user_name') }}</span>
+                    <a href="/logout" class="btn btn-sm btn-danger">Logout</a>
+                {% else %}
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: center; width: 100%;">
+                  <a href="/login" class="btn btn-light" style="font-size: 25px; flex: 1; padding: 1.5rem; border-radius: 12px; text-align: center; font-weight:bold; border: 2px solid #dee2e6;">Login</a> 
+                    <a href="/register" class="btn btn-light" style="font-size: 25px; flex: 1; padding: 1.5rem; border-radius: 12px; text-align: center; font-weight:bold; border: 2px solid #dee2e6;">Register</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    {% block content %} 
+    {% endblock %}
+  </div>
+</body>
+</html>

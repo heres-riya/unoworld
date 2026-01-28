@@ -55,7 +55,8 @@ class Student(db.Model):
 
 @app.route('/')
 def index():
-    student_id = session.get('student_id')
+    #student_id = session.get('student_id')
+    student_id = False
     if student_id:
         student = Student.query.get(student_id)
         if (student):
