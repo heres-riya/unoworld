@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+{% block content %}
+<!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <div class="bg-gradient-accent" style="width: 2rem; height: 2rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <span style="font-weight: 700; font-size: 1.125rem;">LearnHub</span>
+      </div>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/courses" class="nav-link" style="color: hsl(var(--foreground));">Courses</a>
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/logout" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Log Out </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main style="padding-top: 6rem; padding-bottom: 4rem;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem;">
+
+<!-- Header -->
+  <div style="margin-bottom: 3rem;">
+    <p style="color: hsl(var(--muted-foreground)); font-size: 4.5rem; max-width: 42rem; margin-bottom: 2rem;"> <b>Welcome, {{ student.name }}</p></b>
+
+    <br><br>
+    <br> <br>
+     <h1 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem;">Enrolled Courses</h1>
+      <p style="color: hsl(var(--muted-foreground)); font-size: 1.125rem; max-width: 42rem; margin-bottom: 2rem;">
+        These are the courses you are enrolled in.
+      </p>
+
+
+    <!-- Courses Grid -->
+    <div class="courses-grid">
+
+        {% for c in student.courses %}
+
+            {% if c.image is none %}
+              {% set my_image = "static/images/default.png" %}
+            {% else %}
+              {% set my_image = "static/images/" + c.image %}
+            {% endif %}
+
+        <!-- Course Card 1 -->
+
+        <div class="course-card">
+          <img src="{{ my_image }}" alt="Course thumbnail" class="course-thumbnail">
+          <div class="course-content">
+            <span class="course-badge">Enrolled</span>
+            <h3 class="course-title">   {{ c.course_name }} </h3>
+            <p class="course-desc">  {{ c.description }}</p>
+            <div class="course-meta">
+              <span class="course-meta-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                40 hours
+              </span>
+              <span class="course-meta-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                <a href="{{ c.link }}">Zoom details</a>
+              </span>
+            </div>
+            <div class="course-footer">
+              <div>
+                <div class="course-price">$0.00</div>
+                <div class="course-instructor">by {{ c.instructor }}</div>
+              </div>
+              <button class="btn-enroll">View Details</button>
+            </div>
+          </div>
+        </div>
+         {% endfor %}
+    </div>
+    <!-- Courses Grid End -->
+
+
+    
+
+  <br><br>
+    <h1 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem;">Explore Courses</h1>
+    <p style="color: hsl(var(--muted-foreground)); font-size: 1.125rem; max-width: 42rem; margin-bottom: 2rem;">
+      Discover courses taught by industry experts. Learn new skills and advance your career.
+    </p>
+
+  </div>
+
+  <!-- Courses Grid -->
+  <div class="courses-grid">
+
+      {% for c in available_courses %}
+
+          {% if c.image is none %}
+            {% set my_image = "static/images/default.png" %}
+          {% else %}
+            {% set my_image = "static/images/" + c.image %}
+          {% endif %}
+
+      <!-- Course Card 1 -->
+      
+      <div class="course-card">
+        <img src="{{ my_image }}" alt="Course thumbnail" class="course-thumbnail">
+        <div class="course-content">
+          <span class="course-badge">Development</span>
+          <h3 class="course-title">   {{ c.course_name }} </h3>
+          <p class="course-desc">  {{ c.description }}</p>
+          <div class="course-meta">
+            <span class="course-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              40 hours
+            </span>
+            <span class="course-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              Beginner
+            </span>
+          </div>
+          <div class="course-footer">
+            <div>
+              <div class="course-price">$0.00</div>
+              <div class="course-instructor">by {{ c.instructor }}</div>
+            </div>
+            <button class="btn-enroll">Enroll Now</button>
+          </div>
+        </div>
+      </div>
+       {% endfor %}
+  </div>
+
+
+
+<!--
+                <h4>Available Courses</h4>
+                <div class="list-group">
+                    {% for c in available_courses %}
+                        <div>{{ c.course_name }}</div>
+                        <div><i>{{ c.description }}</i></div>
+                        <div>{{ c.link }}</div>
+
+                        <a href="/enroll/{{ c.id }}" class="btn btn-sm btn-success">Join</a>
+                        <br><br>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+-->
+      
+
+
+</div>
+{% endblock %}

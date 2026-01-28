@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row">
+
+    <div class="col-md-6">
+        <div class="card shadow-sm pwhat th-3 mb-4">
+            <h3>Course List</h3>
+
+            {% for c in courses %}
+                {{ c.id }}       ) 
+                {{ c.course_name }}      :
+                {{ c.instructor }}
+                <br>
+            {% endfor %}
+            <hr>
+
+        </div>
+    </div>
+
+
+    
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm p-3">
+            <h3>Add Student</h3>
+            <form action="/add_student" method="POST" class="mb-3">
+                <input type="text" name="name" placeholder="Full Name" class="form-control mb-2" required>
+                <input type="email" name="email" placeholder="Email" class="form-control mb-2" required>
+                <button type="submit" class="btn btn-primary w-100">Register Student</button>
+            </form>
+            <hr>
+            <h4>Students List</h4>
+            <ul class="list-group">
+                {% for s in students %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ s.name }} ({{ s.courses|length }} Courses)
+                    <a href="/delete_student/{{ s.id }}" class="btn btn-sm btn-outline-danger">Delete</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm p-3 mb-4">
+            <h3>Enroll Student</h3>
+            <form action="/enroll" method="POST">
+                <select name="student_id" class="form-select mb-2">
+                    {% for s in students %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+                </select>
+                <select name="course_id" class="form-select mb-2">
+                    {% for c in courses %}<option value="{{ c.id }}">{{ c.course_name }}</option>{% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success w-100">Enroll Now</button>
+            </form>
+        </div>
+
+        <div class="card shadow-sm p-3">
+            <h3>Add Course</h3>
+            <form action="/add_course" method="POST">
+                <input type="text" name="course_name" placeholder="Course Name" class="form-control mb-2" required>
+                <input type="text" name="instructor" placeholder="Instructor" class="form-control mb-2" required>
+                <button type="submit" class="btn btn-dark w-100">Create Course</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<h1> Students</h1>
+{% for s in students %}
+{{ s.name }}
+<br><br>
+{% endfor %}
+
+
+{% endblock %}

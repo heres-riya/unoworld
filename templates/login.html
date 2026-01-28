@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+    <!-- Left Panel - Form -->
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 2rem 4rem;">
+      <a href="/" style="display: inline-flex; align-items: center; gap: 0.5rem; color: hsl(var(--muted-foreground)); margin-bottom: 2rem;">
+        ← Back to home
+      </a>
+
+      <div style="max-width: 28rem;">
+        <!-- Logo -->
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem;">
+          <div class="bg-gradient-accent" style="width: 2.5rem; height: 2.5rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </div>
+          <span style="font-weight: 700; font-size: 1.25rem;">LearnHub</span>
+        </div>
+
+        <h1 style="font-size: 1.875rem; font-weight: 700; margin-bottom: 0.5rem;">Welcome back</h1>
+        <p style="color: hsl(var(--muted-foreground)); margin-bottom: 2rem;">
+          Enter the necessary fields to access your account.
+        </p>
+
+        <form method="POST" style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <div>
+            <label class="label" for="email">Email</label>
+            <input class="input" type="email" id="email" name="email" placeholder="you@example.com" required>
+          </div>
+
+          <div>
+            <label class="label" for="password">Password</label>
+            <input class="input" type="password" id="password" name="password" placeholder="Enter your password" required>
+          </div>
+
+          <button type="submit" class="btn btn-accent" style="width: 100%;">
+            Sign In
+          </button>
+        </form>
+
+        <p style="text-align: center; color: hsl(var(--muted-foreground)); margin-top: 1.5rem;">
+          Don't have an account? <a href="/signup">Sign up</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Panel - Hero -->
+    <div class="bg-gradient-hero" style="flex: 1; display: none; position: relative; overflow: hidden;">
+      <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 3rem;">
+        <div style="text-align: center;">
+          <h2 style="font-size: 2.25rem; font-weight: 700; color: hsl(210 40% 98%); margin-bottom: 1rem;">
+            Continue Your Journey
+          </h2>
+          <p style="color: hsl(210 40% 98% / 0.8); font-size: 1.125rem; max-width: 28rem;">
+            Pick up where you left off and keep building your skills.
+          </p>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: -5rem; right: -5rem; width: 20rem; height: 20rem; background: hsl(16 90% 55% / 0.2); border-radius: 50%; filter: blur(60px);"></div>
+      <div style="position: absolute; top: -5rem; left: -5rem; width: 24rem; height: 24rem; background: hsl(16 90% 55% / 0.1); border-radius: 50%; filter: blur(60px);"></div>
+      <style>@media (min-width: 1024px) { .bg-gradient-hero { display: block !important; } }</style>
+    </div>
+
+
+
+{% endblock %}
+

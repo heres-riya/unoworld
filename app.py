@@ -55,7 +55,6 @@ class Student(db.Model):
 
 @app.route('/')
 def index():
-
     student_id = session.get('student_id')
     if student_id:
         student = Student.query.get(student_id)
@@ -65,6 +64,111 @@ def index():
     courses = None # Course.query.all()
 
     return render_template('index.html', students=students, courses=courses)
+
+
+
+@app.route('/admin')
+
+
+def admin():
+    # Admin view
+    student_id = session.get('student_id')
+    if not student_id:
+        return "Access Denied", 403
+
+    student = Student.query.get(student_id)
+    if (not student) or not (student.is_admin):
+        return "Access Denied", 403
+    
+    if not student.is_admin:
+        return "Access Denied", 403
+        
+    students = Student.query.all()
+    courses = Course.query.all()
+    return render_template('admin.html', students=students, courses=courses)
+
+# --- AUTH ROUTES ---
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if Student.query.filter_by(email=email).first():
+            flash('Email already registered!')
+            return redirect(url_for('main.register'))
+
+        new_student = Student(name=name, email=email)
+        new_student.set_password(password)
+        db.session.add(new_student)
+        db.session.commit()
+        return redirect(url_for('main.login'))
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    print("Login route accessed")
+    if request.method == 'POST':
+        print("POST request received")
+        email = request.form.get('email')
+        password = request.form.get('password')
+        student = Student.query.filter_by(email=email).first()
+
+        if student and student.check_password(password):
+            session['student_id'] = student.id
+            session['user_name'] = student.name
+            return redirect(url_for('main.student_dashboard'))
+        flash('Invalid credentials')
+    print("About to render login.html")
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('main.login'))
+
+@app.route('/signup', methods = ['GET', 'POST'])
+def signup():
+    register()
+    return redirect(url_for('main.register'))
+    
+# --- STUDENT PORTAL ROUTES --- MAIN STUDENT PAGE
+@app.route('/dashboard')
+def student_dashboard():
+    student_id = session.get('student_id')
+    if not student_id:
+        return redirect(url_for('main.login'))
+
+    student = Student.query.get(student_id)
+    # Get courses the student is NOT already in
+    available_courses = Course.query.filter(~Course.students.contains(student)).all()
+    courses = Course.query.all()
+    return render_template('portal.html', courses=courses, student=student, available_courses=available_courses)
+
+@app.route('/enroll/<int:course_id>')
+def enroll_student(course_id):
+    student_id = session.get('student_id')
+    if not student_id: return redirect(url_for('main.login'))
+
+    student = Student.query.get(student_id)
+    course = Course.query.get(course_id)
+    if course not in student.courses:
+        student.courses.append(course)
+        db.session.commit()
+    return redirect(url_for('main.student_dashboard'))
+
+# --- ADMIN ACTIONS ---
+@app.route('/add_course', methods=['POST'])
+def add_course():
+    name = request.form.get('course_name')
+    instructor = request.form.get('instructor')
+    db.session.add(Course(course_name=name, instructor=instructor))
+    db.session.commit()
+    return redirect(url_for('main.index'))
+
+
+
 
 if __name__ == '__main__':
     with app.app_context():
