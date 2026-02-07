@@ -147,7 +147,7 @@
               <div class="course-instructor">by {{ c.instructor }}</div>
             </div>
             {% if session.get('student_id') %}
-                <a href="/enroll/{{ c.id }}" class="btn-enroll" style="text-decoration: none; display: flex; align-items: center; justify-content: center; height: 2.5rem; padding: 0 1.5rem;">Enroll Now</a>            {% else %}
+                <a href="/enroll/{{ c.id }}" class="btn-enroll" style="text-decoration: none; display: flex; align-items: center; justify-content: center; height: 2.5rem; padding: 0 1.5rem;">Enroll</a>            {% else %}
               <button class="btn-enroll" disabled style="opacity: 0.5; cursor: not-allowed;">Sign in to Enroll</button>
             {% endif %}
           </div>
