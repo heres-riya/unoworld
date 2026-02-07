@@ -89,7 +89,7 @@
               <div>
                 <div class="course-instructor">by {{ c.instructor }}</div>
               </div>
-              <!-- <button class="btn-enroll">View Details</button> -->
+              <a href="/dropout/{{ c.id }}" class="btn-enroll" style="text-decoration: none; display: flex; align-items: center; justify-content: center; height: 2.5rem; padding: 0 1.5rem; background-color: #ef4444; color: white;" onclick="return confirm('Are you sure you want to drop out of this course?');">Drop Out</a>
             </div>
           </div>
         </div>

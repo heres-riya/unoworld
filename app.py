@@ -181,6 +181,18 @@ def enroll_student(course_id):
         db.session.commit()
     return redirect(url_for('student_dashboard'))
 
+@app.route('/dropout/<int:course_id>')
+def dropout_student(course_id):
+    student_id = session.get('student_id')
+    if not student_id: return redirect(url_for('login'))
+
+    student = Student.query.get(student_id)
+    course = Course.query.get(course_id)
+    if course in student.courses:
+        student.courses.remove(course)
+        db.session.commit()
+    return redirect(url_for('student_dashboard'))
+
 # --- ADMIN ACTIONS ---
 @app.route('/add_course', methods=['POST'])
 def add_course():
