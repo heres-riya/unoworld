@@ -1,31 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<!-- Site Banner -->
-<div id="site-banner" style="background:#fff4e5;color:#663c00;padding:0.75rem 1rem;text-align:center;font-size:0.95rem;margin-top:1rem;">
-  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:1rem;">
-    <div style="flex:1;text-align:center;">
-      Thank you if you joined Zoom classes with us. We are transitioning to this website, please bear with us while we transition.
-    </div>
-    <button id="banner-close" aria-label="Close banner" style="background:transparent;border:none;font-weight:700;cursor:pointer;color:#663c00;">×</button>
-  </div>
-</div>
-<script>
-  (function(){
-    try {
-      if (localStorage.getItem('uno_banner_closed') === '1') {
-        document.addEventListener('DOMContentLoaded', function(){ var b=document.getElementById('site-banner'); if(b) b.style.display='none'; });
-      }
-      document.addEventListener('click', function(e){
-        if (e.target && e.target.id === 'banner-close') {
-          var b=document.getElementById('site-banner'); if (b) b.style.display='none';
-          localStorage.setItem('uno_banner_closed','1');
-        }
-      });
-    } catch(err){}
-  })();
-</script>
-
 <!-- Navbar -->
   <nav class="navbar">
     <div class="navbar-inner">
@@ -53,6 +28,31 @@
     <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem; text-align: center;">
 
 <!-- Header -->
+  <!-- Site Banner inserted here to sit above the Welcome sign with 100px gap -->
+  <div id="site-banner" style="background:#fff4e5;color:#663c00;padding:0.75rem 1rem;text-align:center;font-size:0.95rem;margin-bottom:100px;max-width:1280px;margin-left:auto;margin-right:auto;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:1rem;">
+      <div style="flex:1;text-align:center;">
+        Thank you if you joined Zoom classes with us. We are transitioning to this website, please bear with us while we transition.
+      </div>
+      <button id="banner-close" aria-label="Close banner" style="background:transparent;border:none;font-weight:700;cursor:pointer;color:#663c00;">×</button>
+    </div>
+  </div>
+  <script>
+    (function(){
+      try {
+        if (localStorage.getItem('uno_banner_closed') === '1') {
+          document.addEventListener('DOMContentLoaded', function(){ var b=document.getElementById('site-banner'); if(b) b.style.display='none'; });
+        }
+        document.addEventListener('click', function(e){
+          if (e.target && e.target.id === 'banner-close') {
+            var b=document.getElementById('site-banner'); if (b) b.style.display='none';
+            localStorage.setItem('uno_banner_closed','1');
+          }
+        });
+      } catch(err){}
+    })();
+  </script>
+
   <div style="margin-bottom: 3rem;">
     <p style="color: hsl(var(--muted-foreground)); font-size: 2.2rem; max-width: 42rem; margin: 0 auto 2rem auto;" > 
       <b>
