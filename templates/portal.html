@@ -1,5 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
+
+<!-- Site Banner -->
+<div id="site-banner" style="background:#fff4e5;color:#663c00;padding:0.75rem 1rem;text-align:center;font-size:0.95rem;">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:1rem;">
+    <div style="flex:1;text-align:center;">
+      Thank you if you joined Zoom classes with us. We are transitioning to this website, please bear with us while we transition.
+    </div>
+    <button id="banner-close" aria-label="Close banner" style="background:transparent;border:none;font-weight:700;cursor:pointer;color:#663c00;">×</button>
+  </div>
+</div>
+<script>
+  (function(){
+    try {
+      if (localStorage.getItem('uno_banner_closed') === '1') {
+        document.addEventListener('DOMContentLoaded', function(){ var b=document.getElementById('site-banner'); if(b) b.style.display='none'; });
+      }
+      document.addEventListener('click', function(e){
+        if (e.target && e.target.id === 'banner-close') {
+          var b=document.getElementById('site-banner'); if (b) b.style.display='none';
+          localStorage.setItem('uno_banner_closed','1');
+        }
+      });
+    } catch(err){}
+  })();
+</script>
+
 <!-- Navbar -->
   <nav class="navbar">
     <div class="navbar-inner">
